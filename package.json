@@ -1,0 +1,13 @@
+{
+  "name": "spotlight",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "version:sync": "tsx ./script/sync-version.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^26.4.1",
+    "tsx": "^4.23.13"
+  }
+}

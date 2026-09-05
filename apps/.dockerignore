@@ -1,0 +1,35 @@
+# Compiled output
+dist
+coverage
+
+# Dependencies installed on the host (installed fresh inside the image)
+node_modules
+
+# Local env & secrets (injected at runtime via compose / env vars)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Local runtime data (SQLite db file, mikro-orm temp)
+database
+temp
+.tmp
+
+# Logs
+*.log
+
+# Tests
+test
+
+# VCS / editors / tooling
+.git
+.gitignore
+.idea
+.reasonix
+.vscode
+.DS_Store
+
+# This dockerignore file
+.dockerignore

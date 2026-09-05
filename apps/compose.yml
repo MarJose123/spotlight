@@ -1,0 +1,87 @@
+# ---------------------------------------------------------------------------
+# Spotlight local stack — API + MariaDB.
+#
+# Usage (from the apps/ directory, which is the Docker build context):
+#   docker compose up --build
+#   docker compose down            # stop
+#   docker compose down -v         # stop AND delete the database volume
+# ---------------------------------------------------------------------------
+name: spotlight
+
+services:
+  api:
+    # build context = the NestJS project root (this directory)
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: spotlight-api
+    container_name: spotlight-api
+    restart: unless-stopped
+    environment:
+      # Application
+      NODE_ENV: production
+      PORT: 3000
+      # Database driver — matches compose MariaDB stack. To run in SQLite-only
+      # mode, set DB_CONNECTION=sqlite and remove/stop the db service.
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_USERNAME: spotlight
+      DB_PASSWORD: spotlight
+      DB_DATABASE: spotlight
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    # ------------------------------------------------------------------
+    # NOTE on first boot: src/main.ts only runs orm.schema.ensureDatabase()
+    # + orm.schema.update() when NODE_ENV === 'development' (see the guard
+    # in src/main.ts). In this production stack a fresh `spotlight` database
+    # starts EMPTY (no tables) until the project adds MikroORM migrations /
+    # seeds. Until then the healthcheck below reports the API unhealthy while
+    # the schema is missing — that is the truthful signal that migrations are
+    # still pending. Bootstrap the empty DB once with:
+    #   docker compose run --rm api \
+    #     sh -lc 'NODE_ENV=development node dist/src/main.js'
+    # (or equivalent) against the compose `db` service before relying on it.
+    # ------------------------------------------------------------------
+    # The API has no dedicated /health endpoint; the public, DB-backed
+    # `GET /api/v1/users` (UsersController.findAll) is used as a real
+    # app+database liveness probe. Uses Node's built-in http client (images
+    # don't guarantee curl/wget).
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000/api/v1/users').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  db:
+    image: mariadb:11
+    container_name: spotlight-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: spotlight
+      MARIADB_USER: spotlight
+      MARIADB_PASSWORD: spotlight
+    ports:
+      # Exposed to the host for local tooling/debugging; comment out to keep
+      # the DB private to the compose network.
+      - "3307:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  db-data:
