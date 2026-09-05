@@ -42,7 +42,7 @@ async function bootstrap() {
         return new BadRequestException({
           message: messages,
           error: 'Bad Request',
-          statusCode: 422,
+          statusCode: 400,
         });
       },
     }),
