@@ -11,6 +11,7 @@ import {
   VersioningType,
 } from '@nestjs/common';
 import { MikroORM } from '@mikro-orm/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -54,6 +55,25 @@ async function bootstrap() {
     await orm.schema.ensureDatabase();
     await orm.schema.update();
   }
+
+  /**
+   * Swagger UI documentation
+   */
+
+  const configOpenApi = new DocumentBuilder()
+    .setTitle('Spotlight API')
+    .setDescription('Spotlight API description')
+    .setVersion('1.0')
+    .build();
+
+  const openApiDocumentFactory = () =>
+    SwaggerModule.createDocument(app, configOpenApi);
+  SwaggerModule.setup('docs', app, openApiDocumentFactory);
+
+  /**
+   * Start the application
+   */
+
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();

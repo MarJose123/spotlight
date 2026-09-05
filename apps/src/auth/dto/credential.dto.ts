@@ -9,11 +9,11 @@ import {
 export class CredentialDto {
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email!: string;
 
   @IsNotEmpty()
   @IsString()
   @MinLength(8)
   @MaxLength(72)
-  password: string;
+  password!: string;
 }

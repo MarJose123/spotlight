@@ -1,4 +1,4 @@
 export class JwtTokenDto {
   user: any;
-  access_token: string;
+  access_token!: string;
 }
