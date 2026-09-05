@@ -1,9 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UsersModule } from '@/users/users.module';
-import { LocalStrategy } from './strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { AuthController } from './auth.controller';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { createSecretKey } from 'node:crypto';
@@ -11,10 +8,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import AppConfig from '@/config/app.config';
 
 @Module({
-  controllers: [AuthController],
   imports: [
-    UsersModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     ConfigModule.forRoot({
       load: [AppConfig],
     }),
@@ -29,7 +24,7 @@ import AppConfig from '@/config/app.config';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
-  exports: [AuthService],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService, PassportModule],
 })
 export class AuthModule {}

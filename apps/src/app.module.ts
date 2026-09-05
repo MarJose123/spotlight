@@ -6,6 +6,9 @@ import { buildMikroOrmOptions } from './config/mikro-orm.config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import AppConfig from './config/app.config';
+import { AppController } from './app.controller';
+import { AuthService } from '@/auth/auth.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,5 +24,7 @@ import AppConfig from './config/app.config';
     UsersModule,
     AuthModule,
   ],
+  providers: [AuthService, JwtService],
+  controllers: [AppController],
 })
 export class AppModule {}

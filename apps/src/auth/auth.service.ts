@@ -1,22 +1,22 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '@/users/users.service';
 import { User } from '@/users/entities/user.entity';
 import bcrypt from 'bcrypt';
 import { CredentialDto } from './dto/credential.dto';
 import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDto } from './dto/jwt-token.dto';
 import { JwtPayloadInterface } from './interface/jwt-payload.interface';
+import { EntityManager } from '@mikro-orm/core';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
     private jwtService: JwtService,
+    private readonly em: EntityManager,
   ) {}
 
   /** Validates the user email and returns true if it exists. */
   async validateUserEmail(email: string): Promise<User | null> {
-    const user = await this.usersService.findByEmail(email);
+    const user = await this.em.findOne(User, { email });
     if (!user) {
       return null;
     }
@@ -29,7 +29,7 @@ export class AuthService {
    * if they are valid.
    */
   async validateUserCredentials(cred: CredentialDto): Promise<JwtTokenDto> {
-    const user = await this.usersService.findByEmail(cred.email);
+    const user = await this.em.findOne(User, { email: cred.email });
     if (user && (await bcrypt.compare(cred.password, user.password))) {
       const payload: JwtPayloadInterface = {
         username: user.name,
