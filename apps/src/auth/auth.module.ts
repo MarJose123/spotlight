@@ -5,7 +5,6 @@ import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { createSecretKey } from 'node:crypto';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import AppConfig from '@/config/app.config';
 
 @Module({
   imports: [
