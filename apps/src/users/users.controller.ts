@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,6 +15,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
+import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
+import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
 
 @Controller({
   path: 'users',
@@ -24,8 +27,11 @@ export class UsersController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  findAll(
+    @Query()
+    pagination: PaginationQueryDto,
+  ): Promise<PaginationResponseDto<User>> {
+    return this.usersService.findAll(pagination);
   }
 
   @Get(':id')

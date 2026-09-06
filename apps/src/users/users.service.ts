@@ -3,14 +3,27 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
+import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly em: EntityManager) {}
 
   /** Returns all users. */
-  async findAll(): Promise<User[]> {
-    return this.em.find(User, {});
+  async findAll(
+    paginationQuery: PaginationQueryDto,
+  ): Promise<PaginationResponseDto<User>> {
+    const { page, limit } = paginationQuery;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.em.findAndCount(
+      User,
+      {},
+      { offset: skip, limit, orderBy: { createdAt: 'desc' } },
+    );
+
+    return new PaginationResponseDto(data, total, page, limit);
   }
 
   /** Returns a single user by id, or throws 404. */
