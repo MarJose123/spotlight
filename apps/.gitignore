@@ -44,9 +44,6 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
-# local SQLite databases
-**/**/spotlight.db
-
 # MikroORM metadata cache / temp dir
 /temp
 
