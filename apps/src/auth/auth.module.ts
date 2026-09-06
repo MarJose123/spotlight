@@ -5,6 +5,7 @@ import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { createSecretKey } from 'node:crypto';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TokenService } from '@/auth/token.service';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, TokenService],
   exports: [AuthService, PassportModule],
 })
 export class AuthModule {}

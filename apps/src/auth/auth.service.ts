@@ -2,15 +2,16 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '@/users/entities/user.entity';
 import bcrypt from 'bcrypt';
 import { CredentialDto } from './dto/credential.dto';
-import { JwtService } from '@nestjs/jwt';
 import { JwtTokenDto } from './dto/jwt-token.dto';
-import { JwtPayloadInterface } from './interface/jwt-payload.interface';
 import { EntityManager } from '@mikro-orm/core';
+import { TokenService } from '@/auth/token.service';
+import { randomUUID } from 'node:crypto';
+import { RefreshToken } from '@/auth/entities/refresh-token.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private jwtService: JwtService,
+    private tokenService: TokenService,
     private readonly em: EntityManager,
   ) {}
 
@@ -28,20 +29,84 @@ export class AuthService {
    * Validates the user credentials (email and password) and returns the user
    * if they are valid.
    */
-  async validateUserCredentials(cred: CredentialDto): Promise<JwtTokenDto> {
+  async login(cred: CredentialDto): Promise<JwtTokenDto> {
     const user = await this.em.findOne(User, { email: cred.email });
     if (user && (await bcrypt.compare(cred.password, user.password))) {
-      const payload: JwtPayloadInterface = {
-        username: user.name,
-        sub: user.id,
-      };
-      return {
-        user: user,
-        access_token: this.jwtService.sign(payload),
-      };
+      const token = this.tokenService.createAccessToken(user);
+      const refreshToken = this.tokenService.createRefreshToken();
+      const tokenHash = this.tokenService.hashRefreshToken(refreshToken);
+      const familyId = randomUUID();
+
+      const refreshTokenModel = new RefreshToken();
+      Object.assign(refreshTokenModel, {
+        userId: user.id,
+        tokenHash,
+        familyId,
+        expiresAt: this.getRefreshTokenExpiration(),
+      });
+
+      this.em.persist(refreshTokenModel);
+      await this.em.flush();
+
+      return new JwtTokenDto(user, token, refreshToken, 300);
     }
     throw new UnauthorizedException({
       message: 'These credentials do not match our records.',
     });
+  }
+
+  async refresh(token: string) {
+    const tokenHash = this.tokenService.hashRefreshToken(token);
+    const storedToken = await this.em.findOne(RefreshToken, { tokenHash });
+    if (!storedToken)
+      throw new UnauthorizedException({ message: 'Invalid refresh token' });
+    if (storedToken.expiresAt.getTime() < Date.now())
+      throw new UnauthorizedException({ message: 'Refresh token expired' });
+    if (storedToken.revokedAt) {
+      await this.em.nativeUpdate(
+        RefreshToken,
+        {
+          familyId: storedToken.familyId,
+          revokedAt: null,
+        },
+        {
+          revokedAt: new Date(),
+        },
+      );
+      throw new UnauthorizedException({
+        message: 'Refresh token reuse detected',
+      });
+    }
+
+    const user = await this.em.findOne(User, { id: storedToken.userId });
+    if (!user)
+      throw new UnauthorizedException({
+        message: 'Invalid authenticated user',
+      });
+
+    storedToken.revokedAt = new Date();
+
+    const newRefreshToken = this.tokenService.createRefreshToken();
+    const newRefreshTokenModel = new RefreshToken();
+    Object.assign(newRefreshTokenModel, {
+      userId: user.id,
+      tokenHash: this.tokenService.hashRefreshToken(newRefreshToken),
+      familyId: storedToken.familyId,
+      expiresAt: this.getRefreshTokenExpiration(),
+    });
+
+    storedToken.replacedByTokenId = newRefreshTokenModel.id;
+
+    this.em.persist(newRefreshTokenModel);
+    await this.em.flush();
+
+    const newAccessToken = this.tokenService.createAccessToken(user);
+
+    return new JwtTokenDto(user, newAccessToken, newRefreshToken);
+  }
+
+  private getRefreshTokenExpiration(): Date {
+    // 24 hours
+    return new Date(Date.now() + 24 * 60 * 60 * 1000);
   }
 }

@@ -15,6 +15,16 @@ export class AppController {
       });
     }
 
-    return await this.authService.validateUserCredentials(dto);
+    return await this.authService.login(dto);
+  }
+
+  @Post('logout')
+  logout() {
+    return { message: 'Logged out successfully' };
+  }
+
+  @Post('refresh')
+  async refresh(@Body('refreshToken') refreshToken: string) {
+    return await this.authService.refresh(refreshToken);
   }
 }

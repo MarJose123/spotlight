@@ -13,7 +13,9 @@ http:
     - name: limit
       value: "2"
       type: query
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Ild5YXR0LktpZWhuODRAeWFob28uY29tIiwic3ViIjoiYjY3OTczNDctOTI5Ni00MDIxLWFiNDEtYWYyZjdhMzNmMjMzIiwiaWF0IjoxNzg4Njk5NzMxLCJleHAiOjE3ODg3ODYxMzF9.bQ9i6mkxAF3eZgO2Kx9jlXmar5MKSB8_12cJFwKPSBw
 
 settings:
   encodeUrl: true
