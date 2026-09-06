@@ -1,0 +1,10 @@
+name: Development
+variables:
+  - name: domain
+    value: 127.0.0.1
+  - name: port
+    value: "3000"
+  - name: version
+    value: v1
+  - secret: true
+    name: access_token
