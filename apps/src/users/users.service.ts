@@ -5,10 +5,15 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
+import bcrypt from 'bcrypt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly em: EntityManager) {}
+  constructor(
+    private readonly em: EntityManager,
+    private readonly configService: ConfigService,
+  ) {}
 
   /** Returns all users. */
   async findAll(
@@ -35,7 +40,7 @@ export class UsersService {
     return user;
   }
 
-  /** Returns a single user by email, or null when it does not exist. */
+  /** Returns a single user by email or null when it does not exist. */
   async findByEmail(email: string): Promise<User | null> {
     return this.em.findOne(User, { email });
   }
@@ -43,7 +48,13 @@ export class UsersService {
   /** Creates and persists a new user from the given DTO. */
   async create(dto: CreateUserDto): Promise<User> {
     const user = new User();
-    Object.assign(user, dto);
+    Object.assign(user, {
+      ...dto,
+      password: bcrypt.hashSync(
+        dto.password,
+        this.configService.getOrThrow<number>('app.key'),
+      ),
+    });
     this.em.persist(user);
     await this.em.flush();
     return user;
