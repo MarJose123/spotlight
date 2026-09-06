@@ -8,6 +8,7 @@ import {
 import { randomUUID } from 'node:crypto';
 import { IsOptional } from 'class-validator';
 import { UserStatus } from '@/users/enums/status.enum';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -31,6 +32,7 @@ export class User {
   email!: string;
 
   @Property({ hidden: true })
+  @Exclude()
   password!: string;
 
   @Property()
