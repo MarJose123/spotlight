@@ -20,18 +20,11 @@ export class RefreshToken {
   @Index()
   tokenHash!: string;
 
-  @Index()
-  @Property()
-  familyId!: string;
-
   @Property()
   expiresAt!: Date;
 
   @Property({ nullable: true })
   revokedAt?: Date;
-
-  @Property({ nullable: true })
-  replacedByTokenId?: string;
 
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();

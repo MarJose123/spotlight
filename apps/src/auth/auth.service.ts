@@ -5,7 +5,6 @@ import { CredentialDto } from './dto/credential.dto';
 import { JwtTokenDto } from './dto/jwt-token.dto';
 import { EntityManager } from '@mikro-orm/core';
 import { TokenService } from '@/auth/token.service';
-import { randomUUID } from 'node:crypto';
 import { RefreshToken } from '@/auth/entities/refresh-token.entity';
 
 @Injectable()
@@ -31,28 +30,27 @@ export class AuthService {
    */
   async login(cred: CredentialDto): Promise<JwtTokenDto> {
     const user = await this.em.findOne(User, { email: cred.email });
-    if (user && (await bcrypt.compare(cred.password, user.password))) {
-      const token = this.tokenService.createAccessToken(user);
-      const refreshToken = this.tokenService.createRefreshToken();
-      const tokenHash = this.tokenService.hashRefreshToken(refreshToken);
-      const familyId = randomUUID();
-
-      const refreshTokenModel = new RefreshToken();
-      Object.assign(refreshTokenModel, {
-        userId: user.id,
-        tokenHash,
-        familyId,
-        expiresAt: this.getRefreshTokenExpiration(),
+    if (!user || !(await bcrypt.compare(cred.password, user.password))) {
+      throw new UnauthorizedException({
+        message: 'These credentials do not match our records.',
       });
-
-      this.em.persist(refreshTokenModel);
-      await this.em.flush();
-
-      return new JwtTokenDto(user, token, refreshToken, 300);
     }
-    throw new UnauthorizedException({
-      message: 'These credentials do not match our records.',
+
+    const token = this.tokenService.createAccessToken(user);
+    const refreshToken = this.tokenService.createRefreshToken();
+    const tokenHash = this.tokenService.hashRefreshToken(refreshToken);
+
+    const refreshTokenModel = new RefreshToken();
+    Object.assign(refreshTokenModel, {
+      userId: user.id,
+      tokenHash,
+      expiresAt: this.getRefreshTokenExpiration(),
     });
+
+    this.em.persist(refreshTokenModel);
+    await this.em.flush();
+
+    return new JwtTokenDto(user, token, refreshToken, 300);
   }
 
   async refresh(token: string) {
@@ -62,21 +60,6 @@ export class AuthService {
       throw new UnauthorizedException({ message: 'Invalid refresh token' });
     if (storedToken.expiresAt.getTime() < Date.now())
       throw new UnauthorizedException({ message: 'Refresh token expired' });
-    if (storedToken.revokedAt) {
-      await this.em.nativeUpdate(
-        RefreshToken,
-        {
-          familyId: storedToken.familyId,
-          revokedAt: null,
-        },
-        {
-          revokedAt: new Date(),
-        },
-      );
-      throw new UnauthorizedException({
-        message: 'Refresh token reuse detected',
-      });
-    }
 
     const user = await this.em.findOne(User, { id: storedToken.userId });
     if (!user)
@@ -84,25 +67,18 @@ export class AuthService {
         message: 'Invalid authenticated user',
       });
 
-    storedToken.revokedAt = new Date();
-
-    const newRefreshToken = this.tokenService.createRefreshToken();
-    const newRefreshTokenModel = new RefreshToken();
-    Object.assign(newRefreshTokenModel, {
-      userId: user.id,
-      tokenHash: this.tokenService.hashRefreshToken(newRefreshToken),
-      familyId: storedToken.familyId,
-      expiresAt: this.getRefreshTokenExpiration(),
-    });
-
-    storedToken.replacedByTokenId = newRefreshTokenModel.id;
-
-    this.em.persist(newRefreshTokenModel);
-    await this.em.flush();
-
     const newAccessToken = this.tokenService.createAccessToken(user);
 
-    return new JwtTokenDto(user, newAccessToken, newRefreshToken);
+    return new JwtTokenDto(user, newAccessToken, token);
+  }
+
+  async logout(refreshToken: string) {
+    const tokenHash = this.tokenService.hashRefreshToken(refreshToken);
+    const storedToken = await this.em.findOne(RefreshToken, { tokenHash });
+    if (!storedToken) return;
+
+    storedToken.revokedAt = new Date();
+    await this.em.flush();
   }
 
   private getRefreshTokenExpiration(): Date {

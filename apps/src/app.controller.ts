@@ -1,11 +1,20 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from '@/auth/auth.service';
 import { CredentialLoginDto } from '@/auth/dto/credential-login.dto';
+import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 
 @Controller('auth')
 export class AppController {
   constructor(private authService: AuthService) {}
 
+  @HttpCode(200)
   @Post('login')
   async login(@Body() dto: CredentialLoginDto) {
     const user = await this.authService.validateUserEmail(dto.email);
@@ -18,13 +27,18 @@ export class AppController {
     return await this.authService.login(dto);
   }
 
+  @HttpCode(204)
   @Post('logout')
-  logout() {
+  async logout(@Body('refreshToken') refreshToken: string) {
+    await this.authService.logout(refreshToken);
+
     return { message: 'Logged out successfully' };
   }
 
   @Post('refresh')
-  async refresh(@Body('refreshToken') refreshToken: string) {
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
+  async refresh(@Body('refresh_token') refreshToken: string) {
     return await this.authService.refresh(refreshToken);
   }
 }

@@ -8,3 +8,5 @@ variables:
     value: v1
   - secret: true
     name: access_token
+  - name: refresh_token
+    value: ae928d043157f202af84faef2b4006f97572767fd77a38c8e33ec1ba998f764d8c2971510e1fdbe7a17c056409339eee73b4317843bbe5ed7d30f2687e2f4946

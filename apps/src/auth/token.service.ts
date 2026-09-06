@@ -23,8 +23,4 @@ export class TokenService {
   hashRefreshToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
   }
-
-  verifyAccessToken(token: string): object {
-    return this.jwtService.verify(token);
-  }
 }

@@ -1,0 +1,24 @@
+info:
+  name: Refresh Access Token
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{domain}}:{{port}}/api/{{version}}/auth/refresh"
+  body:
+    type: json
+    data: |-
+      {
+        "refresh_token": "{{refresh_token}}"
+      }
+  auth:
+    type: bearer
+    token: "{{access_token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
