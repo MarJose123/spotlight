@@ -9,6 +9,7 @@ import AppConfig from './config/app.config';
 import { AppController } from './app.controller';
 import { AuthService } from '@/auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { JwtService } from '@nestjs/jwt';
     }),
     UsersModule,
     AuthModule,
+    HealthModule,
   ],
   providers: [AuthService, JwtService],
   controllers: [AppController],
