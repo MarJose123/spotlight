@@ -25,8 +25,7 @@ export class AuthService {
   }
 
   /**
-   * Validates the user credentials (email and password) and returns the user
-   * if they are valid.
+   * Logs in a user by email and password.
    */
   async login(cred: CredentialDto): Promise<JwtTokenDto> {
     const user = await this.em.findOne(User, { email: cred.email });
@@ -53,6 +52,9 @@ export class AuthService {
     return new JwtTokenDto(user, token, refreshToken, 300);
   }
 
+  /**
+   * Refreshes the access token using the refresh token.
+   */
   async refresh(token: string) {
     const tokenHash = this.tokenService.hashRefreshToken(token);
     const storedToken = await this.em.findOne(RefreshToken, { tokenHash });
@@ -72,6 +74,9 @@ export class AuthService {
     return new JwtTokenDto(user, newAccessToken, token);
   }
 
+  /**
+   * Logs out the user by revoking the refresh token.
+   */
   async logout(refreshToken: string) {
     const tokenHash = this.tokenService.hashRefreshToken(refreshToken);
     const storedToken = await this.em.findOne(RefreshToken, { tokenHash });
@@ -81,6 +86,9 @@ export class AuthService {
     await this.em.flush();
   }
 
+  /**
+   * Returns the expiration date for the refresh token.
+   */
   private getRefreshTokenExpiration(): Date {
     // 24 hours
     return new Date(Date.now() + 24 * 60 * 60 * 1000);
