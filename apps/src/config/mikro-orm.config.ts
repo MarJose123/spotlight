@@ -5,6 +5,8 @@ import type { Options } from '@mikro-orm/core';
 import { closeSync, existsSync, mkdirSync, openSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import type { DatabaseConfig } from './database.config';
+import { SeedManager } from '@mikro-orm/seeder';
+import { Migrator } from '@mikro-orm/migrations';
 
 function isDevelopment(): boolean {
   return (process.env.NODE_ENV ?? 'development') === 'development';
@@ -35,6 +37,20 @@ export function buildMikroOrmOptions(db: DatabaseConfig): Partial<Options> {
     entitiesTs: ['./src/**/*.entity.ts'],
     metadataProvider: TsMorphMetadataProvider,
     debug: isDevelopment(),
+    extensions: [SeedManager, Migrator],
+    seeder: {
+      path: './dist/database/seeders',
+      pathTs: './src/database/seeders',
+      defaultSeeder: 'DatabaseSeeder',
+      glob: '!(*.d).{js,ts}',
+    },
+    migrations: {
+      tableName: 'migrations',
+      path: './dist/database/migrations',
+      pathTs: './src/database/migrations',
+      glob: '!(*.d).{js,ts}',
+      transactional: true,
+    },
   };
 
   if (db.connection === 'mysql') {

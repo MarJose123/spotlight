@@ -26,7 +26,7 @@ export default registerAs('database', (): DatabaseConfig => {
     connection,
     database:
       process.env.DB_DATABASE ??
-      (connection === 'mysql' ? 'spotlight' : './database/spotlight.db'),
+      (connection === 'mysql' ? 'spotlight' : './src/database/spotlight.db'),
     host: process.env.DB_HOST ?? '127.0.0.1',
     port: Number(process.env.DB_PORT) || (connection === 'mysql' ? 3306 : 0),
     username: process.env.DB_USERNAME,
