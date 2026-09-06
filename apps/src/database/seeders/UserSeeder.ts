@@ -3,7 +3,7 @@ import { Seeder } from '@mikro-orm/seeder';
 import { UserFactory } from '@/database/factories/UserFactory';
 
 export class UserSeeder extends Seeder {
-  async run(em: EntityManager, context: Dictionary): Promise<void> {
-    new UserFactory(em).make(10);
+  run(em: EntityManager, context: Dictionary): void {
+    context.user = new UserFactory(em).make(10);
   }
 }
