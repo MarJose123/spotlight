@@ -9,19 +9,17 @@ import AppConfig from '@/config/app.config';
 
 @Module({
   imports: [
+    ConfigModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    ConfigModule.forRoot({
-      load: [AppConfig],
-    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService): JwtModuleOptions => ({
         secret: createSecretKey(
           Buffer.from(configService.getOrThrow<string>('app.key')),
         ),
         signOptions: { expiresIn: '5m' },
       }),
-      inject: [ConfigService],
     }),
   ],
   providers: [AuthService, JwtStrategy],
