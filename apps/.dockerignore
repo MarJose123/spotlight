@@ -16,6 +16,7 @@ node_modules
 database
 temp
 .tmp
+**/**/spotlight.db
 
 # Logs
 *.log
