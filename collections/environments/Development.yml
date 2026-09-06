@@ -9,4 +9,4 @@ variables:
   - secret: true
     name: access_token
   - name: refresh_token
-    value: ae928d043157f202af84faef2b4006f97572767fd77a38c8e33ec1ba998f764d8c2971510e1fdbe7a17c056409339eee73b4317843bbe5ed7d30f2687e2f4946
+    value: f1f763a18a0a0fbbc2c135058f78880776a35c14dfe77f92b5739d31675def851afdcab7b078185ee47f0173ec721ead74ea98ff2431ec82a97cc76892b19cc3

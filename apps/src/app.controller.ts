@@ -36,7 +36,6 @@ export class AppController {
   }
 
   @Post('refresh')
-  @UseGuards(JwtAuthGuard)
   @HttpCode(200)
   async refresh(@Body('refresh_token') refreshToken: string) {
     return await this.authService.refresh(refreshToken);
