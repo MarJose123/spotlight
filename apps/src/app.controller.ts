@@ -29,7 +29,8 @@ export class AppController {
 
   @HttpCode(204)
   @Post('logout')
-  async logout(@Body('refreshToken') refreshToken: string) {
+  @UseGuards(JwtAuthGuard)
+  async logout(@Body('refresh_token') refreshToken: string) {
     await this.authService.logout(refreshToken);
 
     return { message: 'Logged out successfully' };
