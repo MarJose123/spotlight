@@ -10,9 +10,11 @@ http:
     type: json
     data: |-
       {
-        "refresh_token": {{refresh_token}}
+        "refresh_token": "{{refresh_token}}"
       }
-  auth: inherit
+  auth:
+    type: bearer
+    token: "{{access_token}}"
 
 runtime:
   scripts:
