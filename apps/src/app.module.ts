@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import AppConfig from './config/app.config';
 import { AppController } from './app.controller';
 import { HealthModule } from './health/health.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { HealthModule } from './health/health.module';
     UsersModule,
     AuthModule,
     HealthModule,
+    PostsModule,
   ],
   controllers: [AppController],
 })

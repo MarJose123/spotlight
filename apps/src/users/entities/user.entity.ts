@@ -4,11 +4,14 @@ import {
   Index,
   PrimaryKey,
   Property,
+  OneToMany,
 } from '@mikro-orm/decorators/legacy';
 import { randomUUID } from 'node:crypto';
 import { IsOptional } from 'class-validator';
 import { UserStatus } from '@/users/enums/status.enum';
 import { Exclude } from 'class-transformer';
+import { Collection } from '@mikro-orm/core';
+import { Posts } from '@/posts/entities/posts.entity';
 
 @Entity()
 export class User {
@@ -38,6 +41,9 @@ export class User {
   @Property()
   @Enum({ items: () => UserStatus, default: UserStatus.ACTIVE })
   status: UserStatus = UserStatus.ACTIVE;
+
+  @OneToMany(() => Posts, (posts) => posts.user)
+  posts? = new Collection<Posts>(this);
 
   @Property()
   createdAt: Date = new Date();
