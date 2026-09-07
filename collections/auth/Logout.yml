@@ -1,0 +1,31 @@
+info:
+  name: Logout
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{domain}}:{{port}}/api/{{version}}/auth/logout"
+  body:
+    type: json
+    data: |-
+      {
+        "refresh_token": {{refresh_token}}
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: after-response
+      code: |-
+        if(res.status === 204) {
+          bru.setEnvVar("access_token", null);
+          bru.setEnvVar("refresh_token", null);
+        }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
