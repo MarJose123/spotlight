@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { createSecretKey } from 'node:crypto';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TokenService } from '@/auth/token.service';
+import { TokenCron } from '@/auth/cron/token.cron';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { TokenService } from '@/auth/token.service';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy, TokenService],
+  providers: [AuthService, JwtStrategy, TokenService, TokenCron],
   exports: [AuthService, PassportModule],
 })
 export class AuthModule {}

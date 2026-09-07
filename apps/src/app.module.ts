@@ -9,9 +9,11 @@ import AppConfig from './config/app.config';
 import { AppController } from './app.controller';
 import { HealthModule } from './health/health.module';
 import { PostsModule } from './posts/posts.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, AppConfig],
