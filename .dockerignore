@@ -1,0 +1,33 @@
+# Keep the Docker build context small for the shared dev images under
+# docker/ (they bake no app code — source & deps are bind-mounted by the
+# root compose.yml). Also keep local secrets out of the build context.
+
+# VCS & editors
+.git
+.idea
+.vscode
+.DS_Store
+
+# Dependencies & build output (installed fresh inside containers/volumes)
+**/node_modules
+**/dist
+**/coverage
+**/build
+**/temp
+node_modules/
+
+# Local env & secrets (never baked into an image)
+**/.env
+**/.env.*
+!**/.env.example
+
+# Runtime data, logs, misc
+**/*.db
+**/*.sqlite*
+**/*.log
+**/*.tsbuildinfo
+*.pid
+script/
+*.md
+**/**/*.md
+**/*.md
