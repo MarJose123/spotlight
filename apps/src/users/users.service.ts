@@ -48,8 +48,7 @@ export class UsersService {
   /** Creates and persists a new user from the given DTO. */
   async create(dto: CreateUserDto): Promise<User> {
     const user = new User();
-    Object.assign(user, {
-      ...dto,
+    Object.assign(user, dto, {
       password: bcrypt.hashSync(
         dto.password,
         this.configService.getOrThrow<number>('app.key'),
