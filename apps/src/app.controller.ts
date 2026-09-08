@@ -12,6 +12,8 @@ import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiOkResponse,
+  ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,10 +23,14 @@ import {
 export class AppController {
   constructor(private authService: AuthService) {}
 
+  @ApiOkResponse({ description: 'Login successful' })
+  @ApiBody({ type: CredentialLoginDto })
+  @ApiOperation({
+    summary: 'Login',
+    description: 'Login with email and password',
+  })
   @HttpCode(200)
   @Post('login')
-  @ApiResponse({ status: 200, description: 'Login successful'})
-  @ApiBody({ type: CredentialLoginDto })
   async login(@Body() dto: CredentialLoginDto) {
     const user = await this.authService.validateUserEmail(dto.email);
     if (!user) {
@@ -37,6 +43,10 @@ export class AppController {
   }
 
   @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Logout',
+    description: 'Logout the user',
+  })
   @ApiResponse({ status: 204, description: 'Logged out successfully' })
   @HttpCode(204)
   @Post('logout')
@@ -47,6 +57,12 @@ export class AppController {
     return { message: 'Logged out successfully' };
   }
 
+
+  @ApiOperation({
+    summary: 'Refresh token',
+    description: 'Refresh the access token',
+  })
+  @ApiResponse({ status: 200, description: 'Access token refreshed' })
   @Post('refresh')
   @HttpCode(200)
   async refresh(@Body('refresh_token') refreshToken: string) {

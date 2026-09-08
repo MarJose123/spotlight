@@ -6,6 +6,7 @@ import {
   HttpHealthIndicator,
 } from '@nestjs/terminus';
 import { DatabaseHealth } from '@/health/database.health';
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 
 @Controller('health')
 export class HealthController {
@@ -16,6 +17,11 @@ export class HealthController {
     private disk: DiskHealthIndicator,
   ) {}
 
+  @ApiOperation({
+    summary: 'Status',
+    description: 'Check the health of the application',
+  })
+  @ApiOkResponse({ summary: 'Health check successful'})
   @Get()
   @HealthCheck()
   check() {

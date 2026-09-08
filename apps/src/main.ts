@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { MikroORM } from '@mikro-orm/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -78,7 +79,21 @@ async function bootstrap() {
 
   const openApiDocumentFactory = () =>
     SwaggerModule.createDocument(app, configOpenApi);
-  SwaggerModule.setup('docs', app, openApiDocumentFactory);
+
+  app.use(
+    '/docs',
+    apiReference({
+      content: openApiDocumentFactory,
+      withFastify: true,
+      theme: 'default',
+      hideModels: true,
+      mcp: { disabled: true },
+      agent: { disabled: true },
+      telemetry: false,
+      hideClientButton: true,
+      setPageTitle: ({ document }) => `${document.title}`
+    }),
+  );
 
   /**
    * Start the application
