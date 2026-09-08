@@ -27,7 +27,7 @@ export class AuthService {
   /**
    * Logs in a user by email and password.
    */
-  async login(cred: CredentialDto): Promise<JwtTokenDto> {
+  async authenticate(cred: CredentialDto): Promise<JwtTokenDto> {
     const user = await this.em.findOne(User, { email: cred.email });
     if (!user || !(await bcrypt.compare(cred.password, user.password))) {
       throw new UnauthorizedException({

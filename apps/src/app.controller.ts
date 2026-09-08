@@ -39,7 +39,7 @@ export class AppController {
       });
     }
 
-    return await this.authService.login(dto);
+    return await this.authService.authenticate(dto);
   }
 
   @ApiBearerAuth()
