@@ -4,10 +4,9 @@ import { User } from './entities/user.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { AuthModule } from '@/auth/auth.module';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [AuthModule, MikroOrmModule.forFeature([User]), ConfigModule],
+  imports: [AuthModule, MikroOrmModule.forFeature([User])],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

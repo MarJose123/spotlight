@@ -6,13 +6,11 @@ import { User } from './entities/user.entity';
 import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
 import bcrypt from 'bcrypt';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly em: EntityManager,
-    private readonly configService: ConfigService,
   ) {}
 
   /** Returns all users. */
@@ -51,7 +49,7 @@ export class UsersService {
     Object.assign(user, dto, {
       password: bcrypt.hashSync(
         dto.password,
-        this.configService.getOrThrow<number>('app.key'),
+        12
       ),
     });
     this.em.persist(user);
