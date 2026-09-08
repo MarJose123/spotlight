@@ -65,6 +65,7 @@ async function bootstrap() {
     .setTitle('Spotlight API')
     .setDescription('Spotlight API description')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const openApiDocumentFactory = () =>

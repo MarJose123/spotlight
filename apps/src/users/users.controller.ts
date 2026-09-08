@@ -17,11 +17,13 @@ import { UsersService } from './users.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller({
   path: 'users',
   version: '1',
 })
+@ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

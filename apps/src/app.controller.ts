@@ -9,7 +9,12 @@ import {
 import { AuthService } from '@/auth/auth.service';
 import { CredentialLoginDto } from '@/auth/dto/credential-login.dto';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -18,6 +23,7 @@ export class AppController {
 
   @HttpCode(200)
   @Post('login')
+  @ApiBody({ type: CredentialLoginDto })
   async login(@Body() dto: CredentialLoginDto) {
     const user = await this.authService.validateUserEmail(dto.email);
     if (!user) {
@@ -29,6 +35,8 @@ export class AppController {
     return await this.authService.login(dto);
   }
 
+  @ApiBearerAuth()
+  @ApiResponse({ status: 204, description: 'Logged out successfully' })
   @HttpCode(204)
   @Post('logout')
   @UseGuards(JwtAuthGuard)
