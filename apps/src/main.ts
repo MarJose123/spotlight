@@ -66,6 +66,14 @@ async function bootstrap() {
     .setDescription('Spotlight API description')
     .setVersion('1.0')
     .addBearerAuth()
+    .addGlobalResponse({
+      status: 500,
+      description: 'Internal server error',
+    })
+    .addGlobalResponse({
+      status: 400,
+      description: 'Bad request',
+    })
     .build();
 
   const openApiDocumentFactory = () =>

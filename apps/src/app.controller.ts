@@ -23,6 +23,7 @@ export class AppController {
 
   @HttpCode(200)
   @Post('login')
+  @ApiResponse({ status: 200, description: 'Login successful'})
   @ApiBody({ type: CredentialLoginDto })
   async login(@Body() dto: CredentialLoginDto) {
     const user = await this.authService.validateUserEmail(dto.email);
