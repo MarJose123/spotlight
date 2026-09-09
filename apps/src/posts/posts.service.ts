@@ -5,7 +5,7 @@ import { PaginationResponseDto } from '@/common/dto/pagination/pagination-respon
 import { Posts } from '@/posts/entities/posts.entity';
 import { CreatePostDto } from '@/posts/dto/create-post.dto';
 import { LikePostDto } from '@/posts/dto/like-post.dto';
-import { Likes } from '@/likes/entities/likes.entity';
+import { Likes } from '@/posts/entities/likes.entity';
 import { PostLikeResponseDto } from '@/common/dto/post-like-response.dto';
 
 @Injectable()

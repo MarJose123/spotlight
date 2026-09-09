@@ -12,7 +12,7 @@ import { AttachmentType } from '@/posts/enums/attachment-type.enum';
 import { IsNotEmpty } from 'class-validator';
 import { PostType } from '@/posts/enums/post-type.enum';
 import { User } from '@/users/entities/user.entity';
-import { Likes } from '@/likes/entities/likes.entity';
+import { Likes } from '@/posts/entities/likes.entity';
 import { Collection } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
 
