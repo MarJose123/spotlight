@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { PaginationMetaDto } from '@/common/dto/pagination-meta.dto';
+import { PaginationMetaDto } from '@/common/dto/pagination/pagination-meta.dto';
 
 export class PaginationResponseDto<T> {
   @ApiProperty({ isArray: true, type: Object})

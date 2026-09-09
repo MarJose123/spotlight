@@ -1,0 +1,23 @@
+info:
+  name: Like post
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{domain}}:{{port}}/api/{{version}}/posts/like"
+  body:
+    type: json
+    data: |-
+      {
+        "post": "36f10d86-930e-49f6-8cbe-322cf32fd826",
+        "user": "76626230-cc0a-4928-8cd8-77b7d07424b3"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

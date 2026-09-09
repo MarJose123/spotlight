@@ -3,7 +3,6 @@ import {
   Index,
   PrimaryKey,
   Property,
-  OneToOne,
   ManyToOne,
 } from '@mikro-orm/decorators/legacy';
 import { randomUUID } from 'node:crypto';
@@ -20,7 +19,7 @@ export class Likes {
   @ManyToOne(() => Posts)
   post!: Posts;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   user!: User;
 
   @Property()

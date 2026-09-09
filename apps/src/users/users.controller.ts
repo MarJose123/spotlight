@@ -17,8 +17,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
-import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
-import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
+import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
+import { PaginationResponseDto } from '@/common/dto/pagination/pagination-response.dto';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,

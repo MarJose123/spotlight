@@ -2,18 +2,21 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
+import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
 import { PostsService } from '@/posts/posts.service';
 import { JwtAuthGuard } from '@/auth/guard/jwt-auth.guard';
 import { CreatePostDto } from '@/posts/dto/create-post.dto';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Posts } from '@/posts/entities/posts.entity';
-import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
+import { PaginationResponseDto } from '@/common/dto/pagination/pagination-response.dto';
 import { LikePostDto } from '@/posts/dto/like-post.dto';
 
 @ApiBearerAuth()
@@ -75,9 +78,17 @@ export class PostsController {
     description: 'success',
     type: Posts,
   })
-  @Post('/like')
+  @Put('/like')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async likePost(@Body() dto: LikePostDto) {
-    return this.postsService.likePost(dto);
+    return  await this.postsService.likePost(dto);
+  }
+
+  @Post('/:id/like')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  async likePostById(@Param('id') id: string, @Body('user') user: string) {
+    return await this.postsService.likePost({ post: id, user });
   }
 }

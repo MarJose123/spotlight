@@ -1,11 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager } from '@mikro-orm/core';
-import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
-import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
+import { PaginationQueryDto } from '@/common/dto/pagination/pagination-query.dto';
+import { PaginationResponseDto } from '@/common/dto/pagination/pagination-response.dto';
 import { Posts } from '@/posts/entities/posts.entity';
 import { CreatePostDto } from '@/posts/dto/create-post.dto';
 import { LikePostDto } from '@/posts/dto/like-post.dto';
 import { Likes } from '@/likes/entities/likes.entity';
+import { PostLikeResponseDto } from '@/common/dto/post-like-response.dto';
 
 @Injectable()
 export class PostsService {
@@ -66,25 +67,44 @@ export class PostsService {
     return post;
   }
 
+  private async incrementLikeCount(post: Posts): Promise<void> {
+    post.likesCount += 1;
+  }
+
+  private async decrementLikeCount(post: Posts): Promise<void> {
+    post.likesCount = Math.max(0, post.likesCount - 1);
+  }
 
   /** Like a post. */
-  async likePost( dto: LikePostDto): Promise<Posts> {
-    // idempotent
+  async likePost(dto: LikePostDto): Promise<PostLikeResponseDto> {
     const post = await this.findById(dto.post);
-    if(!post) throw new NotFoundException(`Post with id ${dto.post} not found`);
 
-    // check if already like or not
-    if(post.likes) {
-      const isLiked = await this.em.findOne(Likes, { post: { id: dto.post }, user: { id: dto.user } });
-      if (isLiked) return post;
+    if (!post) {
+      throw new NotFoundException(`Post with id ${dto.post} not found`);
     }
 
-    const likePost = new Likes();
-    Object.assign(likePost, dto);
+    const existingLike = await this.em.findOne(Likes, {
+      post: dto.post,
+      user: dto.user,
+    });
 
-    this.em.persist(likePost);
+    if (existingLike) {
+      // Unlike
+      this.em.remove(existingLike);
+      await this.decrementLikeCount(post);
+      await this.em.flush();
+
+      return new PostLikeResponseDto(false, post);
+    }
+
+    // Like
+    const like = new Likes();
+    Object.assign(like, dto);
+
+    this.em.persist(like);
+    await this.incrementLikeCount(post);
     await this.em.flush();
 
-    return post;
+    return new PostLikeResponseDto(true, post);
   }
 }

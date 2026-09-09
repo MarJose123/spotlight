@@ -1,0 +1,26 @@
+info:
+  name: Like post by ID
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{domain}}:{{port}}/api/{{version}}/posts/:id/like"
+  params:
+    - name: id
+      value: 36f10d86-930e-49f6-8cbe-322cf32fd826
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "user": "76626230-cc0a-4928-8cd8-77b7d07424b3"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

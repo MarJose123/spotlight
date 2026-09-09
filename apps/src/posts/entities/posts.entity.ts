@@ -53,6 +53,9 @@ export class Posts {
   @OneToMany(() => Likes, (likes) => likes.post)
   likes? = new Collection<Likes>(this);
 
+  @Property({ type: 'number', default: 0 })
+  likesCount: number = 0;
+
   @ApiProperty({ type: 'string', format: 'date-time' })
   @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
