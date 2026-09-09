@@ -10,6 +10,7 @@ import { AppController } from './app.controller';
 import { HealthModule } from './health/health.module';
 import { PostsModule } from './posts/posts.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { LikesModule } from './likes/likes.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AuthModule,
     HealthModule,
     PostsModule,
+    LikesModule,
   ],
   controllers: [AppController],
 })

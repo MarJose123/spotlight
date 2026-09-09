@@ -37,7 +37,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOkResponse({
-    description: 'Get all users',
+    description: 'Get all user',
     type: PaginationResponseDto<User>,
   })
   @ApiOperation({

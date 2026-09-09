@@ -64,7 +64,9 @@ async function bootstrap() {
 
   const configOpenApi = new DocumentBuilder()
     .setTitle('Spotlight API')
-    .setDescription('Spotlight API description')
+    .setDescription(
+      'Spotlight is an internal recognition tool that helps teams celebrate and appreciate their coworkers. Employees can easily post commendations, give shout-outs, and recognize great work, helping foster a positive culture of appreciation and making achievements visible across the organization.',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .addGlobalResponse({
@@ -91,6 +93,7 @@ async function bootstrap() {
       agent: { disabled: true },
       telemetry: false,
       hideClientButton: true,
+      documentDownloadType: 'none',
       setPageTitle: ({ document }) => `${document.title}`
     }),
   );

@@ -4,6 +4,8 @@ import { PaginationQueryDto } from '@/common/dto/pagination-query.dto';
 import { PaginationResponseDto } from '@/common/dto/pagination-response.dto';
 import { Posts } from '@/posts/entities/posts.entity';
 import { CreatePostDto } from '@/posts/dto/create-post.dto';
+import { LikePostDto } from '@/posts/dto/like-post.dto';
+import { Likes } from '@/likes/entities/likes.entity';
 
 @Injectable()
 export class PostsService {
@@ -59,6 +61,28 @@ export class PostsService {
     const post = new Posts();
     Object.assign(post, dto);
     this.em.persist(post);
+    await this.em.flush();
+
+    return post;
+  }
+
+
+  /** Like a post. */
+  async likePost( dto: LikePostDto): Promise<Posts> {
+    // idempotent
+    const post = await this.findById(dto.post);
+    if(!post) throw new NotFoundException(`Post with id ${dto.post} not found`);
+
+    // check if already like or not
+    if(post.likes) {
+      const isLiked = await this.em.findOne(Likes, { post: { id: dto.post }, user: { id: dto.user } });
+      if (isLiked) return post;
+    }
+
+    const likePost = new Likes();
+    Object.assign(likePost, dto);
+
+    this.em.persist(likePost);
     await this.em.flush();
 
     return post;

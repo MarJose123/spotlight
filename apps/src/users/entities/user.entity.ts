@@ -12,6 +12,7 @@ import { UserStatus } from '@/users/enums/status.enum';
 import { Exclude } from 'class-transformer';
 import { Collection } from '@mikro-orm/core';
 import { Posts } from '@/posts/entities/posts.entity';
+import { Likes } from '@/likes/entities/likes.entity';
 
 @Entity()
 export class User {
@@ -44,6 +45,9 @@ export class User {
 
   @OneToMany(() => Posts, (posts) => posts.user)
   posts? = new Collection<Posts>(this);
+
+  @OneToMany(() => Likes, (likes) => likes.user)
+  postLiked? = new Collection<Likes>(this);
 
   @Property()
   createdAt: Date = new Date();
