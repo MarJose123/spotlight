@@ -22,7 +22,12 @@ export class PostsService {
     const [data, total] = await this.em.findAndCount(
       Posts,
       {},
-      { offset: skip, limit, orderBy: { createdAt: 'desc' } },
+      {
+        offset: skip,
+        limit,
+        orderBy: { createdAt: 'desc' },
+        populate: ['likes'],
+      },
     );
 
     return new PaginationResponseDto(data, total, page, limit);
@@ -30,7 +35,7 @@ export class PostsService {
 
   /** Returns a single user by id, or throws 404. */
   async findById(id: string): Promise<Posts> {
-    const post = await this.em.findOne(Posts, { id });
+    const post = await this.em.findOne(Posts, { id }, { populate: ['likes'] });
     if (!post) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
@@ -51,7 +56,12 @@ export class PostsService {
     const [data, total] = await this.em.findAndCount(
       Posts,
       { user: userId },
-      { offset: skip, limit, orderBy: { createdAt: 'desc' } },
+      {
+        offset: skip,
+        limit,
+        orderBy: { createdAt: 'desc' },
+        populate: ['likes'],
+      },
     );
 
     return new PaginationResponseDto(data, total, page, limit);

@@ -6,7 +6,6 @@ import {
   ManyToOne,
 } from '@mikro-orm/decorators/legacy';
 import { randomUUID } from 'node:crypto';
-import {  } from '@mikro-orm/decorators/es';
 import { Posts } from '@/posts/entities/posts.entity';
 import { User } from '@/users/entities/user.entity';
 

@@ -47,7 +47,7 @@ export class User {
   posts? = new Collection<Posts>(this);
 
   @OneToMany(() => Likes, (likes) => likes.user)
-  postLiked? = new Collection<Likes>(this);
+  likes? = new Collection<Likes>(this);
 
   @Property()
   createdAt: Date = new Date();
