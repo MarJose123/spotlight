@@ -13,6 +13,7 @@ import {
 import { MikroORM } from '@mikro-orm/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import helmet from '@fastify/helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -27,6 +28,7 @@ async function bootstrap() {
     defaultVersion: '1',
   });
   app.enableShutdownHooks();
+  await app.register(helmet);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
