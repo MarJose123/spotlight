@@ -39,7 +39,12 @@ export class Posts {
   @IsNotEmpty()
   attachment!: string;
 
-  @ApiProperty({ type: 'string', format: 'enum', enum: PostType, default: PostType.USER })
+  @ApiProperty({
+    type: 'string',
+    format: 'enum',
+    enum: PostType,
+    default: PostType.USER,
+  })
   @Property()
   @Enum({ items: () => PostType, default: PostType.USER })
   @IsNotEmpty()

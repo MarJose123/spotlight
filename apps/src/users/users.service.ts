@@ -9,9 +9,7 @@ import bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly em: EntityManager,
-  ) {}
+  constructor(private readonly em: EntityManager) {}
 
   /** Returns all users. */
   async findAll(
@@ -47,10 +45,7 @@ export class UsersService {
   async create(dto: CreateUserDto): Promise<User> {
     const user = new User();
     Object.assign(user, dto, {
-      password: bcrypt.hashSync(
-        dto.password,
-        12
-      ),
+      password: bcrypt.hashSync(dto.password, 12),
     });
     this.em.persist(user);
     await this.em.flush();

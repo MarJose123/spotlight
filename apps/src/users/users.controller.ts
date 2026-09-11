@@ -65,7 +65,7 @@ export class UsersController {
     return this.usersService.findById(id);
   }
 
-  @ApiCreatedResponse({ description: "User has been created"})
+  @ApiCreatedResponse({ description: 'User has been created' })
   @ApiOperation({
     summary: 'Create user',
     description: 'Create a new user',
@@ -76,10 +76,10 @@ export class UsersController {
   }
 
   @ApiOperation({
-    summary: "Update user",
-    description: "Update record of the user"
+    summary: 'Update user',
+    description: 'Update record of the user',
   })
-  @ApiOkResponse({ description: "Record has been updated"})
+  @ApiOkResponse({ description: 'Record has been updated' })
   @Patch(':id')
   async update(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
@@ -89,16 +89,15 @@ export class UsersController {
   }
 
   @ApiOperation({
-    summary: "Delete user",
-    description: "Delete record of the user"
+    summary: 'Delete user',
+    description: 'Delete record of the user',
   })
-  @ApiNoContentResponse({ description: "Record has been deleted"})
+  @ApiNoContentResponse({ description: 'Record has been deleted' })
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<User> {
-    return  this.usersService.remove(id);
-
+    return this.usersService.remove(id);
   }
 }

@@ -96,7 +96,7 @@ async function bootstrap() {
       telemetry: false,
       hideClientButton: true,
       documentDownloadType: 'none',
-      setPageTitle: ({ document }) => `${document.title}`
+      setPageTitle: ({ document }) => `${document.title}`,
     }),
   );
 

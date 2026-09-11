@@ -7,6 +7,7 @@ import {
 } from '@nestjs/terminus';
 import { DatabaseHealth } from '@/health/database.health';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { seconds, Throttle } from '@nestjs/throttler';
 
 @Controller('health')
 export class HealthController {
@@ -21,9 +22,10 @@ export class HealthController {
     summary: 'Status',
     description: 'Check the health of the application',
   })
-  @ApiOkResponse({ summary: 'Health check successful'})
+  @ApiOkResponse({ summary: 'Health check successful' })
   @Get()
   @HealthCheck()
+  @Throttle({ default: { limit: 3, ttl: seconds(2) } })
   check() {
     return this.health.check([
       () => this.db.isHealthy(),

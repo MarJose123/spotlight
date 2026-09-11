@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { PaginationMetaDto } from '@/common/dto/pagination/pagination-meta.dto';
 
 export class PaginationResponseDto<T> {
-  @ApiProperty({ isArray: true, type: Object})
+  @ApiProperty({ isArray: true, type: Object })
   @Type(() => Object)
   data?: T[];
 

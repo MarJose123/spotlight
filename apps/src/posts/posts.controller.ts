@@ -18,6 +18,7 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { Posts } from '@/posts/entities/posts.entity';
 import { PaginationResponseDto } from '@/common/dto/pagination/pagination-response.dto';
 import { LikePostDto } from '@/posts/dto/like-post.dto';
+import { minutes, seconds, Throttle } from '@nestjs/throttler';
 
 @ApiBearerAuth()
 @Controller('posts')
@@ -57,7 +58,7 @@ export class PostsController {
 
   @ApiOperation({
     summary: 'Create post',
-    description: 'Create post'
+    description: 'Create post',
   })
   @ApiOkResponse({
     description: 'success',
@@ -69,10 +70,9 @@ export class PostsController {
     return this.postsService.create(dto);
   }
 
-
   @ApiOperation({
     summary: 'Like post',
-    description: 'Like post'
+    description: 'Like post',
   })
   @ApiOkResponse({
     description: 'success',
@@ -81,13 +81,19 @@ export class PostsController {
   @Put('/like')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
+  @Throttle({
+    default: { limit: 2, ttl: seconds(1), blockDuration: minutes(5) },
+  })
   async likePost(@Body() dto: LikePostDto) {
-    return  await this.postsService.likePost(dto);
+    return await this.postsService.likePost(dto);
   }
 
   @Post('/:id/like')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
+  @Throttle({
+    default: { limit: 2, ttl: seconds(1), blockDuration: minutes(5) },
+  })
   async likePostById(@Param('id') id: string, @Body('user') user: string) {
     return await this.postsService.likePost({ post: id, user });
   }

@@ -10,11 +10,21 @@ import { AppController } from './app.controller';
 import { HealthModule } from './health/health.module';
 import { PostsModule } from './posts/posts.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { LikesModule } from './likes/likes.module';
+import { minutes, ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: minutes(1),
+          limit: 100,
+        },
+      ],
+      errorMessage: 'Too many requests. Slow down!',
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig, AppConfig],
@@ -28,8 +38,13 @@ import { LikesModule } from './likes/likes.module';
     AuthModule,
     HealthModule,
     PostsModule,
-    LikesModule,
   ],
   controllers: [AppController],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

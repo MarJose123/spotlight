@@ -17,9 +17,10 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { minutes, Throttle } from '@nestjs/throttler';
 
-@Controller('auth')
 @ApiTags('Auth')
+@Controller('auth')
 export class AppController {
   constructor(private authService: AuthService) {}
 
@@ -30,6 +31,7 @@ export class AppController {
     description: 'Login with email and password',
   })
   @HttpCode(200)
+  @Throttle({ default: { limit: 3, blockDuration: minutes(5) } })
   @Post('login')
   async login(@Body() dto: CredentialLoginDto) {
     const user = await this.authService.validateUserEmail(dto.email);
@@ -56,7 +58,6 @@ export class AppController {
 
     return { message: 'Logged out successfully' };
   }
-
 
   @ApiOperation({
     summary: 'Refresh token',
