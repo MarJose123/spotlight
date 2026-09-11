@@ -1,6 +1,9 @@
 {
-  "name": "web",
+  "name": "spotlight-web",
+  "description": "Spotlight is an internal recognition tool that helps teams celebrate and appreciate their coworkers. Employees can easily post commendations, give shout-outs, and recognize great work, helping foster a positive culture of appreciation and making achievements visible across the organization.",
+  "author": "Marjose Darang",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
@@ -15,6 +18,17 @@
     "check": "biome check"
   },
   "dependencies": {
+    "@mantine/core": "^9.6.1",
+    "@mantine/dates": "^9.6.1",
+    "@mantine/dropzone": "^9.6.1",
+    "@mantine/form": "^9.6.1",
+    "@mantine/hooks": "^9.6.1",
+    "@mantine/lightbox": "^9.6.1",
+    "@mantine/modals": "^9.6.1",
+    "@mantine/notifications": "^9.6.1",
+    "@mantine/nprogress": "^9.6.1",
+    "@mantine/spotlight": "^9.6.1",
+    "@mantine/tiptap": "^9.6.1",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-query": "latest",
@@ -23,6 +37,13 @@
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
+    "@tiptap/extension-link": "^3.31.3",
+    "@tiptap/pm": "^3.31.3",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
+    "dayjs": "^1.11.23",
+    "embla-carousel": "^8.5.2",
+    "embla-carousel-react": "^8.5.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.18"
@@ -36,6 +57,9 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "postcss": "^8.5.28",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
     "typescript": "^6.0.2",
     "vite": "^8.0.0"
   },
